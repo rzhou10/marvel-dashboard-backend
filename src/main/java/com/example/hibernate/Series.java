@@ -1,6 +1,6 @@
 package com.example.hibernate;
 
-import com.fasterxml.jackson.annotation.Column;
+import javax.persistence.*;
 
 @Entity(name = "marvel")
 @Table(name = "Series")

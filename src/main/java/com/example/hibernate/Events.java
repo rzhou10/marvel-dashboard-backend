@@ -1,6 +1,7 @@
 package com.example.hibernate;
 
 import java.time.*;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

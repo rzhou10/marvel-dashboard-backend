@@ -1,6 +1,6 @@
 package com.example.hibernate;
 
-import java.time.LocalDateTime;
+import javax.persistence.*;
 
 @Entity(name = "marvel")
 @Table(name = "Creators")

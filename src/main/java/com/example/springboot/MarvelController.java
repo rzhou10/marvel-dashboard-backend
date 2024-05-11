@@ -2,7 +2,7 @@ package com.example.springboot;
 
 import java.sql.*;
 import java.util.ArrayList;
-import main.java.com.example.hibernate.DbInfo;
+import com.example.hibernate.DbInfo;
 import com.example.interfaces.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
