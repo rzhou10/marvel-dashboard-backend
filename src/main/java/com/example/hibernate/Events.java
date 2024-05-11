@@ -1,25 +1,29 @@
-package com.example.interfaces;
+package com.example.hibernate;
 
 import java.time.*;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Entity(name = "marvel")
+@Table(name = "Events")
 public class Events {
-    @JsonProperty("marvelEventsId")
-    private int marvelEventsId;
-    @JsonProperty("title")
-    private String title;
-    @JsonProperty("description")
-    private String description;
-    @JsonProperty("image")
-    private String image;
-    @JsonProperty("start_date")
-    private LocalDateTime startDate;
-    @JsonProperty("end_date")
-    private LocalDateTime endDate;
+    @Id
+    @GeneratedValue
+    int id;
+    @Column(name = "marvel_event_id")
+    int marvelEventId;
+    @Column(name = "title")
+    String title;
+    @Column(name = "description")
+    String description;
+    @Column(name = "image")
+    String team;
+    @Column(name = "start_date")
+    LocalDateTime startDate;
+    @Column(name = "end_date")
+    LocalDateTime endDate;
 
-    public Events(int marvelEventsId, String title, String description, String image, LocalDateTime startDate, LocalDateTime endDate) {
-        this.marvelEventsId = marvelEventsId;
+    public Events(String title, String description, String image, LocalDateTime startDate, LocalDateTime endDate) {
         this.title = title;
         this.description = description;
         this.image = image;
