@@ -1,0 +1,19 @@
+{
+  "name": "marvel-dashboard-backend",
+  "version": "1.0.0",
+  "description": "marvel backend for the dashboard",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rzhou10/marvel-dashboard-backend.git"
+  },
+  "author": "Renjie Zhou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rzhou10/marvel-dashboard-backend/issues"
+  },
+  "homepage": "https://github.com/rzhou10/marvel-dashboard-backend#readme"
+}
