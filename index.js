@@ -4,8 +4,7 @@ require('dotenv').config();
 const exp = require('express');
 const http = require('http');
 // Files (required)
-const config = require('./configs/config');
-const express = require('./configs/express');
+const express = require('./express/express');
 
 
 // Initiate express file
@@ -21,7 +20,7 @@ app.use(exp.static(__dirname + "./"));
 // Server Initialization
 const httpServer = http.createServer(app);
 httpServer.listen(
-  config.prodServer.port,
+  process.env.APP_PORT,
   '127.0.0.1',
-  () => console.log('Server running on:', `http://127.0.0.1:${config.devServer.port}`)
+  () => console.log('Server running on:', `http://127.0.0.1:${process.env.APP_PORT}`)
 );
