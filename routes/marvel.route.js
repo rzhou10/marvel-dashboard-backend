@@ -1,19 +1,18 @@
-const character = require('../controllers/marvel.controller');
+import { getCharacters, getSingleCharacter, saveCharacter, updateCharacter, deleteCharacter } from '../controllers/marvel.controller.js';
 
-
-module.exports = function (app, express) {
+export default function routes (app, express) {
 
     // Packages
     const router = express.Router();
 
-    router.get('/characters', character.getCharacters);
-    router.get('/single-character', character.getSingleCharacter);
+    router.get('/characters', getCharacters);
+    router.get('/single-character', getSingleCharacter);
 
-    router.post('/save-character', character.saveCharacter);
+    router.post('/save-character', saveCharacter);
 
-    router.put('/update-character', character.updateCharacter);
+    router.put('/update-character', updateCharacter);
 
-    router.delete('/delete-character', character.deleteCharacter)
+    router.delete('/delete-character', deleteCharacter)
 
     app.use('/', router);
 

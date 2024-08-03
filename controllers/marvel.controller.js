@@ -1,15 +1,16 @@
+import axios from "axios";
 
-const getCharacters = (req, res) => {
+export const getCharacters = (req, res) => {
     try {
 
-        return res.send(200).json({})
+        return res.status(200).json({})
     } catch (e) {
         console.warn(e);
         return res.status(500).json({ message: "An error occurred with getting the characters" })
     }
 }
 
-const getSingleCharacter = (req, res) => {
+export const getSingleCharacter = (req, res) => {
     try {
         const query = `select
             marvel.Character.name as charName, marvel.Character.description as charDescription, marvel.Character.team, marvel.Character.powers_abilities,
@@ -33,8 +34,9 @@ const getSingleCharacter = (req, res) => {
     }
 }
 
-const saveCharacter = (req, res) => {
+export const saveCharacter = async(req, res) => {
     try {
+        const comicsRes = await axios.post('');
         // fetch information from marvel APIs to get additional information so we can get a complete overview
         const characterQuery = `insert into marvel.Character
             (marvel.Character.marvel_character_id, marvel.Character.name, marvel.Character.description, marvel.Character.team, marvel.Character.powers_abilities, marvel.Character.marvel_comics_id)
@@ -51,25 +53,20 @@ const saveCharacter = (req, res) => {
     }
 }
 
-const updateCharacter = (req, res) => {
+export const updateCharacter = (req, res) => {
     try {
-        return res.send(200).json({ message: "Successfully updated character!" })
+        return res.status(200).json({ message: "Successfully updated character!" })
     } catch (e) {
         console.warn(e);
         return res.status(500).json({ message: "An error occurred with getting the characters" })
     }
 }
 
-const deleteCharacter = (req, res) => {
+export const deleteCharacter = (req, res) => {
     try {
-        return res.send(200).json({ message: "Successfully delete character!" })
+        return res.status(200).json({ message: "Successfully delete character!" })
     } catch (e) {
         console.warn(e);
         return res.status(500).json({ message: "An error occurred with getting the characters" })
     }
-}
-
-module.exports = {
-    getCharacters, getSingleCharacter, saveCharacter,
-    updateCharacter, deleteCharacter
 }

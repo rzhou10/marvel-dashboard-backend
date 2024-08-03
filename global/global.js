@@ -1,6 +1,7 @@
+import mysql from "mysql";
+
 const sqlDriver = function (queryAttr) {
   try {
-    const mysql = require('mysql2');
     const prodSql = mysql.createConnection({
       host: process.env.MYSQL_HOST,
       user: process.env.MYSQL_USER,
@@ -31,6 +32,6 @@ const sqlDriver = function (queryAttr) {
   }
 }
 
-module.exports = {
+export default {
   sqlDriver
 }

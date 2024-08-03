@@ -1,10 +1,14 @@
 // Packages (required)
-const express = require('express');
-const bodyParser = require('body-parser');
-cors = require('cors');
+import express from 'express';
+import pkg from 'body-parser';
+import cors from "cors";
+
+import routes from "../routes/marvel.route.js"
+
+const { urlencoded, json } = pkg;
 
 // Exported Express Module
-module.exports = function () {
+export default function exp() {
 
   // Initialize express
   const app = express();
@@ -19,9 +23,9 @@ module.exports = function () {
 
 
   //Set req.body property with any type (extended: true)
-  app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit: 50000}));
+  app.use(urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
 
-  app.use(bodyParser.json({limit: '50mb'}));
+  app.use(json({ limit: '50mb' }));
   app.use(cors({
     origin: (origin, callback) => {
       return callback(null, true);
@@ -29,7 +33,7 @@ module.exports = function () {
   }));
 
   // All Routes
-  require('../routes/marvel.route')(app, express);
+  routes(app, express)
 
   return app;
 

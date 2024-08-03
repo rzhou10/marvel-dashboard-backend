@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "marvel backend for the dashboard",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,6 +24,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "http": "^0.0.1-security"
+    "http": "^0.0.1-security",
+    "mysql": "^2.18.1",
+    "path": "^0.12.7"
   }
 }

@@ -6,4 +6,4 @@ Node.js app to update, create or delete Marvel Characters based on what the user
 
 1. `npm i`
 2. `npm run`
-3. `localhost:4000` will be the base part of all endpoints
+3. `localhost:4500` will be the base part of all endpoints

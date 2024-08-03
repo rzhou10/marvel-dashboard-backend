@@ -1,25 +1,26 @@
 // allow for env file
-require('dotenv').config();
+import 'dotenv/config';
 // Packages (required)
-const exp = require('express');
-const http = require('http');
-// Files (required)
-const express = require('./express/express');
-
+import { createServer } from 'http';
+import express from 'express';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import exp from "./express/express.js"
+import path from "path";
 
 // Initiate express file
-const app = express();
+const app = exp();
 app.enable('trust proxy');
 
-
 // Set __dirname for directories
-app.use(exp.static(__dirname + "../../"));
-app.use(exp.static(__dirname + "./"));
+const dirname1 = dirname(fileURLToPath(import.meta.url));
+
+app.use(express.static(path.join(dirname1, "../../")));
+app.use(express.static(path.join(dirname1, "./")));
 
 
 // Server Initialization
-const httpServer = http.createServer(app);
-httpServer.listen(
+createServer(app).listen(
   process.env.APP_PORT,
   '127.0.0.1',
   () => console.log('Server running on:', `http://127.0.0.1:${process.env.APP_PORT}`)
