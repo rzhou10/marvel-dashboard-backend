@@ -1,6 +1,9 @@
 import mysql from "mysql";
 
-const sqlDriver = function (queryAttr) {
+/*************************************
+    Establish connection to MySQL
+**************************************/
+export const mySqlConnection = function (queryAttr) {
   try {
     const prodSql = mysql.createConnection({
       host: process.env.MYSQL_HOST,
@@ -30,8 +33,4 @@ const sqlDriver = function (queryAttr) {
   } catch (e) {
     console.log("MySQL Error: ", e)
   }
-}
-
-export default {
-  sqlDriver
 }
