@@ -1,5 +1,5 @@
 import axios from "axios";
-import { mySqlConnection } from "../global/global";
+import { mySqlConnection } from "../global/global.js";
 
 /**********************************************
   Fetches all Characters through pagination
@@ -54,28 +54,92 @@ export const getSingleCharacter = async (req, res) => {
 
 /******************************************************
   Saves character to the database
-  req.body = {
+  req.body = [{
     characterId: id for the requested character (int)
-  }
+    name: name for the requested character (string)
+    image: image url for the requested character (string)
+    description: image url for the requested character (string)
+  }]
+  res = message based on result of database query
 *******************************************************/
 export const saveCharacter = async (req, res) => {
   try {
-    const characterId = req.body.characterId;
+    const characters = req.body;
+
     // fetch information from marvel APIs to get additional information so we can get a complete overview
-    const comicsRes = await axios.post(`https://gateway.marvel.com:443/v1/public/characters/${characterId}/comics?apikey=${PUBLIC_KEY}`);
-    const creatorsRes = await axios.post(`https://gateway.marvel.com:443/v1/public/characters/${characterId}/events?apikey=${PUBLIC_KEY}`);
+    const axiosCallsComics = [];
+    const charIds = [];
 
-    const characterQuery = `insert into marvel.Character
-            (marvel.Character.marvel_character_id, marvel.Character.name, marvel.Character.image, marvel.Character.description, marvel.Character.team, marvel.Character.powers_abilities)
-            values (${characterId}, ${req.body.name}, ${req.body.image}, ${req.body.description}, '', '', '');`
+    characters.forEach(async ch => {
+      const characterId = ch.id;
+      axiosCallsComics.push(await axios.get(`https://gateway.marvel.com:443/v1/public/characters/${characterId}/comics?format=comic&apikey=${process.env.PUBLIC_KEY}`));
+      charIds.push(characterId);
+    });
+
+    const comicsRes = await Promise.all(axiosCallsComics);
+
+    if (comicsRes.some(cr => cr.code !== 200)) {
+      return res.status(500).json({ message: `An error occurred with fetching comics` });
+    }
+
+    // create all values needed to insert into MySQL
+    const characterValues = characters.map((ch) => `('${ch.id}', '${ch.name}', '${ch.image}', '${ch.description}', '', '')`).join(', ')
+    let comicsValues = [];
+    let creatorValues = [];
+    let characterComicJunctionValues = [];
+    let comicsCreatorJunctionValues = [];
+
+    comicsRes.data.results.forEach((cr) => {
+      // values for comics table
+      comicsValues.push(`('${cr.id}', '${cr.digitalId}', '${cr.title}', '${cr.issueNo}', '${cr.description}', '${cr.thumbnail}.${cr.extension}', '${cr.upc}', '${cr.diamondCode}')`);
+      // values for creator table
+      cr.creators.items.forEach(c => {
+        const temp = resourceURI.split('/');
+        const id = temp[temp.length - 1];
+        creatorValues.push(`('${id}', '${c.name}', '${c.role}')`);
+        // also add values for junction table
+        comicsCreatorJunctionValues.push(`('${cr.id}', '${id}')`);
+      });
+
+      // values for character comics junction table
+      cr.characters.items.forEach(ch => {
+        const temp = resourceURI.split('/');
+        const id = temp[temp.length - 1];
+
+        // only add for characters that were in the intial request
+        if (charIds.includes(id)) {
+          characterComicJunctionValues.push(`('${cr.id}', '${id}')`);
+        }
+      })
+    })
+
+    const characterQuery = `insert into marvel.Character\n
+      (marvel.Character.marvel_character_id, marvel.Character.name, marvel.Character.image, marvel.Character.description, marvel.Character.team, marvel.Character.powers_abilities)\n
+      values ${characterValues};`
     // upsert in case the values already exist
-    const comicsQuery = ``;
-    const creatorsQuery = ``;
+    const comicsQuery = `upsert into marvel.Comics\n
+      (marvel.Comics.marvel_comics_id, marvel.Comics.digital_id, marvel.Comics.title, marvel.Comics.issue_no, marvel.Comics.description, marvel.Comics.cover, marvel.Comics.upc, marvel.Comics.diamondCode)\n
+      values ${comicsValues.join(', ')};`;
+    const creatorsQuery = `upsert into marvel.Creators\n
+      (marvel.Comics.marvel_creator_id, marvel.Comics.digital_id, marvel.Comics.title, marvel.Comics.issue_no, marvel.Comics.description, marvel.Comics.cover, marvel.Comics.upc, marvel.Comics.diamondCode)\n
+      values ${creatorValues.join(', ')}`;
+    const characterComicJunction = `upsert into marvel.Character_Comics\n
+      (marvel.Character_Comics.marvel_character_id, marvel.Character_Comics.marvel_comics_id)\n
+      values ${characterComicJunctionValues.join(', ')}`;
+    const comicsCreatorJunction = `upsert into marvel.Character_Comics\n
+      (marvel.Character_Comics.marvel_character_id, marvel.Character_Comics.marvel_comics_id)\n
+      values ${comicsCreatorJunctionValues.join(', ')}`;
 
-    const results = await mySqlConnection(characterQuery);
+    const allInserts = [await mySqlConnection(characterQuery), await mySqlConnection(comicsQuery), await mySqlConnection(creatorsQuery), await mySqlConnection(characterComicJunction), await mySqlConnection(comicsCreatorJunction)];
+
+    if (allInserts.includes(false)) {
+      return res.status(500).json({ message: "An error occurred with saving the characters" });
+    }
+
+    return res.status(200).json({ message: "Successfully updated character" });
   } catch (e) {
     console.warn(e);
-    return res.status(500).json({ message: `An error occurred with getting the character with the id of ${req.params.id}` })
+    return res.status(500).json({ message: `An error occurred with saving the character` });
   }
 }
 

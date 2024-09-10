@@ -32,5 +32,6 @@ export const mySqlConnection = function (queryAttr) {
     })
   } catch (e) {
     console.log("MySQL Error: ", e)
+    return false;
   }
 }
